@@ -16,47 +16,47 @@ public class GerenciadorTarefas {
     // Esse contador é só pra dar um ID único pra cada tarefa
     static int contadorId = 1;
 
-    public static void main(String[] args) {
-        boolean sair = false;
+   public static void main(String[] args) {
+    boolean sair = false;
 
-        // Só um textinho de boas-vindas
-        System.out.println("=======================================");
-        System.out.println(" Bem-vindo ao seu Gerenciador de Tarefas ");
-        System.out.println("=======================================");
+    System.out.println("=======================================");
+    System.out.println(" Bem-vindo ao seu Gerenciador de Tarefas ");
+    System.out.println("=======================================");
 
-        // Enquanto a pessoa não escolher sair, esse menu fica aparecendo
-        while (!sair) {
-            System.out.println("\nMenu:");
-            System.out.println("---------------------------------------");
-            System.out.println("1. Criar Tarefa");
-            System.out.println("2. Listar Tarefas");
-            System.out.println("3. Atualizar Tarefa");
-            System.out.println("4. Remover Tarefa");
-            System.out.println("5. Buscar Tarefa");
-            System.out.println("6. Sair");
-            System.out.println("---------------------------------------");
-            System.out.print("Escolha uma opcao: ");
+    while (!sair) {
+        System.out.println("\nMenu:");
+        System.out.println("---------------------------------------");
+        System.out.println("1. Criar Tarefa");
+        System.out.println("2. Listar Tarefas");
+        System.out.println("3. Atualizar Tarefa");
+        System.out.println("4. Remover Tarefa");
+        System.out.println("5. Buscar Tarefa");
+        System.out.println("6. Sair");
+        System.out.println("---------------------------------------");
+        System.out.print("Escolha uma opcao: ");
 
-            // Aqui lê a opção que o usuário digitou
+        try {
             int opcao = scanner.nextInt();
-            scanner.nextLine(); // isso é pra evitar bug com o "enter"
+            scanner.nextLine(); // limpa o buffer
 
-            // Dependendo da opção, chama o método certo
             switch (opcao) {
                 case 1 -> criar();
                 case 2 -> listar();
                 case 3 -> atualizar();
                 case 4 -> remover();
                 case 5 -> buscar();
-                case 6 -> sair = true; // quando escolhe sair, termina o loop
+                case 6 -> sair = true;
                 default -> System.out.println("Opcao invalida. Tente novamente.");
             }
+        } catch (Exception e) {
+            System.out.println("Entrada invalida! Por favor, digite um numero.");
+            scanner.nextLine(); // limpa o buffer para evitar loop infinito
         }
-
-        // Mensagem final quando sai do programa
-        System.out.println("\nSaindo do programa... Ate logo!");
-        System.out.println("=======================================");
     }
+
+    System.out.println("\nSaindo do programa... Ate logo!");
+    System.out.println("=======================================");
+}
 
     // Esse método cria uma nova tarefa
     static void criar() {
@@ -93,7 +93,7 @@ public class GerenciadorTarefas {
         }
 
         // Se não achou nenhuma com aquele ID
-        System.out.println("❌ Tarefa não encontrada.");
+        System.out.println("❌ Tarefa nao encontrada.");
     }
 
     // Remove uma tarefa com base no ID
