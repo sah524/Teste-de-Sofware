@@ -16,14 +16,41 @@ public class GerenciadorTarefas {
     // Esse contador é só pra dar um ID único pra cada tarefa
     static int contadorId = 1;
 
-   public static void main(String[] args) {
-    boolean sair = false;
+    public static void main(String[] args) {
+        boolean sair = false;
 
-    System.out.println("=======================================");
-    System.out.println(" Bem-vindo ao seu Gerenciador de Tarefas ");
-    System.out.println("=======================================");
+        System.out.println("=======================================");
+        System.out.println(" Bem-vindo ao seu Gerenciador de Tarefas ");
+        System.out.println("=======================================");
 
-    while (!sair) {
+        while (!sair) {
+            mostrarMenu();
+
+            try {
+                int opcao = scanner.nextInt();
+                scanner.nextLine(); // limpa o buffer
+
+                switch (opcao) {
+                    case 1 -> criar();
+                    case 2 -> listar();
+                    case 3 -> atualizar();
+                    case 4 -> remover();
+                    case 5 -> buscar();
+                    case 6 -> sair = true;
+                    default -> System.out.println("Opcao invalida. Tente novamente.");
+                }
+            } catch (Exception e) {
+                System.out.println("Entrada invalida! Por favor, digite um numero.");
+                scanner.nextLine(); // limpa o buffer para evitar loop infinito
+            }
+        }
+
+        System.out.println("\nSaindo do programa... Ate logo!");
+        System.out.println("=======================================");
+    }
+
+    // Mostra o menu principal
+    static void mostrarMenu() {
         System.out.println("\nMenu:");
         System.out.println("---------------------------------------");
         System.out.println("1. Criar Tarefa");
@@ -34,44 +61,22 @@ public class GerenciadorTarefas {
         System.out.println("6. Sair");
         System.out.println("---------------------------------------");
         System.out.print("Escolha uma opcao: ");
-
-        try {
-            int opcao = scanner.nextInt();
-            scanner.nextLine(); // limpa o buffer
-
-            switch (opcao) {
-                case 1 -> criar();
-                case 2 -> listar();
-                case 3 -> atualizar();
-                case 4 -> remover();
-                case 5 -> buscar();
-                case 6 -> sair = true;
-                default -> System.out.println("Opcao invalida. Tente novamente.");
-            }
-        } catch (Exception e) {
-            System.out.println("Entrada invalida! Por favor, digite um numero.");
-            scanner.nextLine(); // limpa o buffer para evitar loop infinito
-        }
     }
-
-    System.out.println("\nSaindo do programa... Ate logo!");
-    System.out.println("=======================================");
-}
 
     // Esse método cria uma nova tarefa
     static void criar() {
         System.out.print("Descricao da tarefa: ");
         String descricao = scanner.nextLine();
         tarefas.add(new Tarefa(contadorId++, descricao)); // adiciona na lista
-        System.out.println(" Tarefa criada com sucesso.");
+        System.out.println("Tarefa criada com sucesso.");
     }
 
     // Aqui lista todas as tarefas que foram criadas até agora
     static void listar() {
         if (tarefas.isEmpty()) {
-            System.out.println(" Nenhuma tarefa cadastrada.");
+            System.out.println("Nenhuma tarefa cadastrada.");
         } else {
-            System.out.println("? Lista de Tarefas:");
+            System.out.println("Lista de Tarefas:");
             tarefas.forEach(System.out::println); // imprime cada uma
         }
     }
@@ -82,18 +87,14 @@ public class GerenciadorTarefas {
         int id = scanner.nextInt();
         scanner.nextLine();
 
-        // Procura a tarefa com o ID informado
-        for (Tarefa t : tarefas) {
-            if (t.id == id) {
-                System.out.print("Nova descrição: ");
-                t.descricao = scanner.nextLine(); // atualiza a descrição
-                System.out.println("🔁 Tarefa atualizada.");
-                return;
-            }
+        Tarefa tarefa = encontrarPorId(id);
+        if (tarefa != null) {
+            System.out.print("Nova descrição: ");
+            tarefa.setDescricao(scanner.nextLine()); // atualiza a descrição
+            System.out.println("Tarefa atualizada.");
+        } else {
+            System.out.println("Tarefa nao encontrada.");
         }
-
-        // Se não achou nenhuma com aquele ID
-        System.out.println("❌ Tarefa nao encontrada.");
     }
 
     // Remove uma tarefa com base no ID
@@ -102,12 +103,11 @@ public class GerenciadorTarefas {
         int id = scanner.nextInt();
         scanner.nextLine();
 
-        // Tenta remover a tarefa com aquele ID
-        boolean removida = tarefas.removeIf(t -> t.id == id);
+        boolean removida = tarefas.removeIf(t -> t.getId() == id);
         if (removida) {
             System.out.println("Tarefa removida.");
         } else {
-            System.out.println("❌ Tarefa nao encontrada.");
+            System.out.println("Tarefa nao encontrada.");
         }
     }
 
@@ -116,16 +116,23 @@ public class GerenciadorTarefas {
         System.out.print("Palavra-chave para busca: ");
         String termo = scanner.nextLine().toLowerCase();
 
-        // Filtra só as tarefas que contêm o termo
         List<Tarefa> resultados = tarefas.stream()
-               .filter(t -> t.descricao.toLowerCase().contains(termo))
-               .toList();
+            .filter(t -> t.getDescricao().toLowerCase().contains(termo))
+            .toList();
 
         if (resultados.isEmpty()) {
-            System.out.println("🔍 Nenhuma tarefa encontrada com esse termo.");
+            System.out.println("Nenhuma tarefa encontrada com esse termo.");
         } else {
-            System.out.println("🔍 Tarefas encontradas:");
+            System.out.println("Tarefas encontradas:");
             resultados.forEach(System.out::println); // mostra os resultados
         }
+    }
+
+    // Procura uma tarefa pelo ID
+    static Tarefa encontrarPorId(int id) {
+        return tarefas.stream()
+            .filter(t -> t.getId() == id)
+            .findFirst()
+            .orElse(null);
     }
 }
